@@ -1,0 +1,5 @@
+[phases.build]
+cmds = ["dotnet publish GradoCeroV1/GradoCeroV1.csproj -c Release -o out"]
+
+[start]
+cmd = "dotnet out/GradoCeroV1.dll"
