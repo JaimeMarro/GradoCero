@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GradoCeroV1.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260620054905_PostgreSQLMigration")]
-    partial class PostgreSQLMigration
+    [Migration("20260620060026_InitialPostgres")]
+    partial class InitialPostgres
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
