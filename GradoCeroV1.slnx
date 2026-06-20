@@ -1,3 +1,7 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Dockerfile" />
+    <File Path="railway.toml" />
+  </Folder>
   <Project Path="GradoCeroV1/GradoCeroV1.csproj" />
 </Solution>
