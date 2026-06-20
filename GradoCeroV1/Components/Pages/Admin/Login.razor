@@ -1,0 +1,60 @@
+﻿@page "/admin/login"
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject EstadoSesion Sesion
+@using GradoCeroV1.Services
+
+<div class="login-container">
+    <div class="login-card">
+        <h1 class="login-app-nombre">GradoCero</h1>
+        <p class="login-label">ADMIN</p>
+        <h2 class="login-titulo">Acceso Administrador</h2>
+
+        <div class="login-field">
+            <span class="login-field-icon">👤</span>
+            <input class="login-input" 
+                   @bind="usuario" 
+                   placeholder="admin" />
+        </div>
+
+        <div class="login-field">
+            <span class="login-field-icon">🔒</span>
+            <input class="login-input" 
+                   @bind="pass" 
+                   type="@(mostrarPass ? "text" : "password")"
+                   placeholder="••••••••" />
+            <span class="login-eye" @onclick="() => mostrarPass = !mostrarPass">
+                @(mostrarPass ? "🙈" : "👁️")
+            </span>
+        </div>
+
+        @if (!string.IsNullOrEmpty(mensajeError))
+        {
+            <p class="login-error">@mensajeError</p>
+        }
+
+        <button class="login-btn" @onclick="IniciarSesion">
+            Entrar →
+        </button>
+    </div>
+</div>
+
+@code {
+    private string usuario = "";
+    private string pass = "";
+    private string mensajeError = "";
+    private bool mostrarPass = false;
+
+    private void IniciarSesion()
+    {
+        if (usuario == "admin" && pass == "4321")
+        {
+            Sesion.IniciarSesion();
+            Navigation.NavigateTo("/admin/panel");
+        }
+        else
+        {
+            mensajeError = "Usuario o contraseña incorrectos";
+        }
+    }
+}

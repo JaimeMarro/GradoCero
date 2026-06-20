@@ -1,0 +1,919 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #0d1117;
+    color: #ffffff;
+}
+
+.app-container {
+    min-height: 100vh;
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+#blazor-error-ui {
+    display: none;
+}
+
+/* INDEX */
+.index-container {
+    position: relative;
+    min-height: 100vh;
+    background-image: url('../images/teclado-fondo.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.index-fondo {
+    display: none;
+}
+
+.index-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    padding: 1.5rem 1.2rem 1rem;
+}
+
+.index-titulo {
+    color: #f5c518;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+}
+
+.search-wrapper {
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 0.6rem 1rem;
+    gap: 0.5rem;
+}
+
+.search-icon {
+    font-size: 0.9rem;
+    opacity: 0.6;
+}
+
+.search-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: white;
+    font-size: 0.95rem;
+    width: 100%;
+}
+
+    .search-input::placeholder {
+        color: rgba(255,255,255,0.4);
+    }
+
+.index-fondo img {
+    width: 100%;
+    height: 100vh;
+    object-fit: cover;
+    opacity: 0.6;
+}
+
+.resultados-container {
+    position: absolute;
+    top: 130px;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    background: rgba(13, 17, 23, 0.85);
+    min-height: calc(100vh - 130px);
+    padding: 1rem 1.2rem;
+    backdrop-filter: blur(4px);
+}
+
+.resultados-label {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 1px;
+    margin-bottom: 0.8rem;
+}
+
+.resultado-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    cursor: pointer;
+}
+
+.resultado-icono {
+    width: 40px;
+    height: 40px;
+    background: rgba(245,197,24,0.15);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.resultado-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.resultado-nombre {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: white;
+}
+
+.resultado-autor {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.5);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.resultado-modo {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 4px;
+}
+
+.modo-mayor {
+    color: #f5c518;
+    background: rgba(245,197,24,0.15);
+}
+
+.modo-menor {
+    color: #7eb8f7;
+    background: rgba(126,184,247,0.15);
+}
+
+.resultado-flecha {
+    color: rgba(255,255,255,0.3);
+    font-size: 1.4rem;
+}
+
+.sin-resultados {
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    padding: 2rem 0;
+}
+
+/* VISUALIZADOR */
+.viz-container {
+    min-height: 100vh;
+    position: relative;
+    background-image: url('../images/teclado-fondo.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    padding-bottom: 2rem;
+}
+
+    .viz-container::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.65);
+        z-index: 0;
+    }
+
+.viz-header, .viz-info, .viz-controles, .viz-cuerpo {
+    position: relative;
+    z-index: 1;
+}
+
+.viz-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.2rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.viz-back {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.8rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+
+.viz-titulo {
+    color: #f5c518;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.viz-search-icon {
+    cursor: pointer;
+    font-size: 1rem;
+    opacity: 0.6;
+}
+
+.viz-info {
+    padding: 1.2rem 1.2rem 0.5rem;
+    border-left: 3px solid #f5c518;
+    margin: 1rem 1.2rem;
+}
+
+.viz-nombre {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #f5c518;
+}
+
+.viz-autor {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 1px;
+    margin-top: 0.2rem;
+}
+
+.viz-controles {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0 1.2rem 1rem;
+}
+
+.viz-selector {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    color: white;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.viz-modo {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #f5c518;
+    letter-spacing: 1px;
+}
+
+.viz-cuerpo {
+    padding: 0.5rem 1.2rem;
+    font-family: monospace;
+}
+
+.viz-seccion {
+    color: #7eb8f7;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    margin: 1.2rem 0 0.5rem;
+}
+
+.viz-linea {
+    margin: 0;
+    padding-top: 1.8em;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.85);
+    font-size: 0.9rem;
+}
+
+.viz-selector {
+    background: #1e2330;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    color: white;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.8rem center;
+    padding-right: 2rem;
+}
+
+.viz-anotacion {
+    color: rgba(255,255,255,0.4);
+    font-size: 0.8rem;
+    font-style: italic;
+    margin: 0.3rem 0;
+}
+
+/* LOGIN */
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0d1117;
+    padding: 1.5rem;
+}
+
+.login-app-nombre {
+    text-align: center;
+    color: #f5c518;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+}
+
+.login-card {
+    background: #161b27;
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    width: 100%;
+    max-width: 380px;
+}
+
+.login-label {
+    text-align: center;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.3);
+    margin-bottom: 0.5rem;
+}
+
+.login-titulo {
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 0.3rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 2px solid #f5c518;
+    display: inline-block;
+    width: 100%;
+}
+
+.login-field {
+    display: flex;
+    align-items: center;
+    background: #1e2536;
+    border-radius: 10px;
+    padding: 0.7rem 1rem;
+    margin-top: 1.2rem;
+    gap: 0.6rem;
+}
+
+.login-field-icon {
+    font-size: 0.9rem;
+    opacity: 0.5;
+}
+
+.login-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: white;
+    font-size: 0.95rem;
+    flex: 1;
+}
+
+    .login-input::placeholder {
+        color: rgba(255,255,255,0.25);
+    }
+
+.login-eye {
+    cursor: pointer;
+    font-size: 0.9rem;
+    opacity: 0.5;
+}
+
+.login-error {
+    color: #ff6b6b;
+    font-size: 0.8rem;
+    margin-top: 0.8rem;
+    text-align: center;
+}
+
+.login-btn {
+    width: 100%;
+    margin-top: 1.5rem;
+    padding: 0.85rem;
+    background: #f5c518;
+    color: #0d1117;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* PANEL ADMIN */
+.panel-container {
+    min-height: 100vh;
+    background-image: url('../images/teclado-fondo.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+    .panel-container::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.80);
+        z-index: 0;
+    }
+
+.panel-header, .panel-search-wrapper, .panel-lista, .panel-footer {
+    position: relative;
+    z-index: 1;
+}
+
+
+.panel-header {
+    padding: 2rem 1.2rem 0.5rem;
+    text-align: center;
+}
+
+.panel-titulo {
+    color: #f5c518;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.panel-subtitulo {
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.3);
+    margin-top: 0.2rem;
+}
+
+.panel-search-wrapper {
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 0.7rem 1rem;
+    margin: 1rem 1.2rem;
+    gap: 0.5rem;
+}
+
+.panel-search {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: white;
+    font-size: 0.9rem;
+    width: 100%;
+}
+
+    .panel-search::placeholder {
+        color: rgba(255,255,255,0.3);
+    }
+
+.panel-lista {
+    flex: 1;
+    padding: 0 1.2rem;
+}
+
+.panel-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    cursor: pointer;
+}
+
+    .panel-item:hover {
+        background: rgba(255,255,255,0.03);
+    }
+
+.panel-item-icono {
+    width: 42px;
+    height: 42px;
+    background: rgba(245,197,24,0.12);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.panel-item-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.panel-item-nombre {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: white;
+}
+
+.panel-item-autor {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.4);
+}
+
+.panel-item-modo {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+}
+
+.panel-footer {
+    padding: 1.2rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.panel-btn-agregar {
+    width: 100%;
+    padding: 0.9rem;
+    background: #f5c518;
+    color: #0d1117;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* FORMULARIOS ADMIN */
+.form-container {
+    min-height: 100vh;
+    background: #0d1117;
+}
+
+.form-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.2rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.form-back {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.8rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+
+.form-titulo {
+    color: #f5c518;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.form-body {
+    padding: 1.5rem 1.2rem;
+}
+
+.form-subtitulo {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 1.5rem;
+}
+
+.form-field {
+    margin-bottom: 1.2rem;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 0.5rem;
+}
+
+.form-input {
+    width: 100%;
+    background: #161b27;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    color: white;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    outline: none;
+}
+
+.form-input::placeholder {
+    color: rgba(255,255,255,0.2);
+}
+
+.form-select {
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+}
+
+.form-textarea {
+    min-height: 160px;
+    resize: vertical;
+    font-family: monospace;
+    line-height: 1.6;
+}
+
+.form-error {
+    color: #ff6b6b;
+    font-size: 0.8rem;
+    margin-bottom: 0.8rem;
+}
+
+.form-btn {
+    width: 100%;
+    padding: 0.9rem;
+    background: #f5c518;
+    color: #0d1117;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+}
+
+.form-instrucciones {
+    background: #161b27;
+    border-radius: 12px;
+    padding: 1.2rem;
+}
+
+.form-inst-titulo {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 0.5rem;
+}
+
+.form-inst-texto {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 0.8rem;
+}
+
+.form-inst-ejemplo {
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+    padding: 0.7rem;
+    margin-top: 0.5rem;
+}
+
+.form-inst-ejemplo code {
+    color: #f5c518;
+    font-size: 0.85rem;
+    display: block;
+    margin-bottom: 0.3rem;
+}
+
+.form-inst-ejemplo p {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.4);
+}
+
+/* FORMULARIOS ADMIN */
+.form-container {
+    min-height: 100vh;
+    background-image: url('../images/teclado-fondo.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    position: relative;
+}
+
+    .form-container::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.82);
+        z-index: 0;
+    }
+
+.form-header, .form-body {
+    position: relative;
+    z-index: 1;
+}
+
+.form-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.2rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.form-back {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.8rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+
+.form-titulo {
+    color: #f5c518;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.form-body {
+    padding: 1.5rem 1.2rem;
+}
+
+.form-subtitulo {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 1.5rem;
+}
+
+.form-field {
+    margin-bottom: 1.2rem;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 0.5rem;
+}
+
+.form-input {
+    width: 100%;
+    background: #161b27;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    color: white;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    outline: none;
+}
+
+    .form-input::placeholder {
+        color: rgba(255,255,255,0.2);
+    }
+
+.form-select {
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+}
+
+.form-textarea {
+    min-height: 160px;
+    resize: vertical;
+    font-family: monospace;
+    line-height: 1.6;
+}
+
+.form-error {
+    color: #ff6b6b;
+    font-size: 0.8rem;
+    margin-bottom: 0.8rem;
+}
+
+.form-btn {
+    width: 100%;
+    padding: 0.9rem;
+    background: #f5c518;
+    color: #0d1117;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+}
+
+.form-instrucciones {
+    background: #161b27;
+    border-radius: 12px;
+    padding: 1.2rem;
+    border: 1px solid rgba(245,197,24,0.1);
+}
+
+.form-inst-titulo {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 0.5rem;
+}
+
+.form-inst-texto {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 0.8rem;
+}
+
+.form-inst-ejemplo code {
+    color: #f5c518;
+    font-size: 0.85rem;
+    display: block;
+    margin-bottom: 0.3rem;
+    text-shadow: 0 0 8px rgba(245,197,24,0.5);
+}
+
+.form-inst-ejemplo {
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+    padding: 0.7rem;
+    margin-top: 0.5rem;
+}
+
+    .form-inst-ejemplo code {
+        color: #f5c518;
+        font-size: 0.85rem;
+        display: block;
+        margin-bottom: 0.3rem;
+    }
+
+    .form-inst-ejemplo p {
+        font-size: 0.75rem;
+        color: rgba(255,255,255,0.4);
+    }
+
+.form-grados {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.8rem;
+    align-items: center;
+}
+
+.form-grado-btn {
+    background: #1e2536;
+    border: 1px solid rgba(245,197,24,0.3);
+    color: #f5c518;
+    border-radius: 8px;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.form-limpiar-btn {
+    background: rgba(255, 107, 107, 0.1);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    border-radius: 8px;
+    color: #ff6b6b;
+    font-size: 0.8rem;
+    cursor: pointer;
+    padding: 0.3rem 0.8rem;
+}
+
+.form-textarea::-webkit-scrollbar {
+    width: 6px;
+}
+
+.form-textarea::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.05);
+    border-radius: 3px;
+}
+
+.form-textarea::-webkit-scrollbar-thumb {
+    background: #f5c518;
+    border-radius: 3px;
+}
+
+    .form-textarea::-webkit-scrollbar-thumb:hover {
+        background: #ffd700;
+        box-shadow: 0 0 6px rgba(245,197,24,0.8);
+    }
+
+.form-btn-eliminar {
+    width: 100%;
+    padding: 0.9rem;
+    background: transparent;
+    color: #ff6b6b;
+    border: 1px solid rgba(255,107,107,0.3);
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 0.5rem;
+}

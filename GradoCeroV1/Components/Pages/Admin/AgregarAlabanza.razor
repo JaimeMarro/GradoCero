@@ -1,0 +1,123 @@
+﻿@using GradoCeroV1.Data
+@using GradoCeroV1.Models
+@using GradoCeroV1.Services
+@page "/admin/agregar"
+@rendermode InteractiveServer
+@inject AppDbContext DB
+@inject NavigationManager Navigation
+@inject EstadoSesion Sesion
+
+<div class="form-container">
+    <div class="form-header">
+        <button class="form-back" @onclick='() => Navigation.NavigateTo("/admin/panel")'>‹</button>
+        <h1 class="form-titulo">GradoCero</h1>
+        <div style="width:24px"></div>
+    </div>
+
+    <div class="form-body">
+        <h2 class="form-subtitulo">Añadir Alabanza</h2>
+
+        <div class="form-field">
+            <label class="form-label">TÍTULO</label>
+            <input class="form-input" placeholder="Ej: Cuán Grande es Él"
+                   @bind="nueva.Nombre" />
+        </div>
+
+        <div class="form-field">
+            <label class="form-label">AUTOR / ARTISTA</label>
+            <input class="form-input" placeholder="Ej: Marcos Witt"
+                   @bind="nueva.Autor" />
+        </div>
+
+        <div class="form-field">
+            <label class="form-label">MODO</label>
+            <select class="form-input form-select" @onchange="CambiarModo">
+                <option value="false">Mayor</option>
+                <option value="true">Menor Armónico</option>
+            </select>
+        </div>
+
+        <div class="form-field">
+            <label class="form-label">CUERPO DE LA ALABANZA</label>
+            <textarea id="cuerpoTextarea" class="form-input form-textarea"
+                      placeholder="Pegar o escribir letra de la alabanza..."
+                      @bind="nueva.Cuerpo"></textarea>
+                      <div class="form-grados">
+    @foreach (var g in new[] { "1", "2", "3", "4", "5", "6", "7" })
+    {
+                    <button type="button" class="form-grado-btn"
+                            @onclick="() => InsertarGrado(g)">
+                        @("{" + g + "}")
+                    </button>
+    }
+    <button type="button" class="form-limpiar-btn"
+            @onclick="() => nueva.Cuerpo = string.Empty">
+        🗑 Limpiar
+    </button>
+</div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(mensajeError))
+        {
+            <p class="form-error">@mensajeError</p>
+        }
+
+        <button class="form-btn" @onclick="Guardar">Guardar 💾</button>
+
+        <div class="form-instrucciones">
+            <p class="form-inst-titulo">🔧 Instrucciones de Marcado</p>
+            <p class="form-inst-texto">Inserta marcadores numéricos entre llaves donde desees colocar los acordes.</p>
+            <div class="form-inst-ejemplo">
+                <code>{1}, {4}, {5}</code>
+                <p>Usa números para representar los grados (I, IV, V).</p>
+            </div>
+            <div class="form-inst-ejemplo">
+                <code>Dios de lo im{1}posible...</code>
+                <p>El marcador aparecerá justo encima del texto.</p>
+            </div>
+        </div>
+    </div>
+</div>
+@code {
+    private Alabanza nueva = new();
+    private string mensajeError = "";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (!Sesion.EstaLogueado)
+            {
+                Navigation.NavigateTo("/admin/login");
+                return;
+            }
+        }
+    }
+
+    private async Task Guardar()
+    {
+        if (string.IsNullOrWhiteSpace(nueva.Nombre) ||
+            string.IsNullOrWhiteSpace(nueva.Autor) ||
+            string.IsNullOrWhiteSpace(nueva.Cuerpo))
+        {
+            mensajeError = "Todos los campos son obligatorios.";
+            return;
+        }
+
+        DB.Alabanzas.Add(nueva);
+        await DB.SaveChangesAsync();
+        Navigation.NavigateTo("/admin/panel");
+    }
+
+    [Inject] IJSRuntime JS { get; set; } = default!;
+
+    private async Task InsertarGrado(string grado)
+    {
+        await JS.InvokeVoidAsync("insertarEnCursor", "cuerpoTextarea", "{" + grado + "}");
+    }
+
+    private void CambiarModo(ChangeEventArgs e)
+    {
+        nueva.Modo = e.Value?.ToString() == "true";
+    }
+}

@@ -1,0 +1,143 @@
+﻿@using GradoCeroV1.Data
+@using GradoCeroV1.Models
+@using GradoCeroV1.Services
+@using System.Text.RegularExpressions
+@page "/visualizador/{Id:int}"
+@rendermode InteractiveServer
+@inject AppDbContext DB
+@inject TransposicionService Transposicion
+@inject NavigationManager Navigation
+
+@if (alabanza == null)
+{
+    <div class="viz-loading">
+        <p>Cargando...</p>
+    </div>
+}
+else
+{
+    <div class="viz-container">
+        <div class="viz-header">
+            <button class="viz-back" @onclick='() => Navigation.NavigateTo("/")'>‹</button>
+            <h1 class="viz-titulo">GradoCero</h1>
+            <div style="width:24px"></div>
+        </div>
+
+        <div class="viz-info">
+            <div class="viz-nombre-borde"></div>
+            <h2 class="viz-nombre">@alabanza.Nombre</h2>
+            <p class="viz-autor">@alabanza.Autor.ToUpper()</p>
+        </div>
+
+        <div class="viz-controles">
+            <select class="viz-selector" @onchange="CambiarTono">
+                <option value="grados">Grados</option>
+                @if (!alabanza.Modo)
+                {
+                    <option value="C">C</option>
+                    <option value="Db">Db</option>
+                    <option value="D">D</option>
+                    <option value="Eb">Eb</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="F#">F#</option>
+                    <option value="G">G</option>
+                    <option value="G#">G#</option>
+                    <option value="A">A</option>
+                    <option value="Bb">Bb</option>
+                    <option value="B">B</option>
+                }
+                else
+                {
+                    <option value="Cm">Cm</option>
+                    <option value="C#m">C#m</option>
+                    <option value="Dm">Dm</option>
+                    <option value="Ebm">Ebm</option>
+                    <option value="Em">Em</option>
+                    <option value="Fm">Fm</option>
+                    <option value="F#m">F#m</option>
+                    <option value="Gm">Gm</option>
+                    <option value="G#m">G#m</option>
+                    <option value="Am">Am</option>
+                    <option value="A#m">A#m</option>
+                    <option value="Bm">Bm</option>
+                }
+            </select>
+            <span class="viz-modo">@(alabanza.Modo ? "MENOR" : "MAYOR")</span>
+        </div>
+
+        <div class="viz-cuerpo">
+            @foreach (var linea in alabanza.Cuerpo.Split('\n'))
+            {
+                @if (linea.StartsWith("["))
+                {
+                    <p class="viz-seccion">@linea.Trim('[', ']')</p>
+                }
+                else if (linea.StartsWith("("))
+                {
+                    <p class="viz-anotacion">@linea</p>
+                }
+                else
+                {
+                    <p class="viz-linea">@RenderLinea(linea)</p>
+                }
+            }
+        </div>
+    </div>
+}
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Alabanza? alabanza;
+    private string tonoSeleccionado = "grados";
+    private string[] acordesActuales = { "1", "2", "3", "4", "5", "6", "7" };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            alabanza = await DB.Alabanzas.FindAsync(Id);
+            acordesActuales = Transposicion.ObtenerAcordes(tonoSeleccionado);
+            StateHasChanged();
+        }
+    }
+
+    private void CambiarTono(ChangeEventArgs e)
+    {
+        tonoSeleccionado = e.Value?.ToString() ?? "grados";
+        acordesActuales = Transposicion.ObtenerAcordes(tonoSeleccionado);
+    }
+
+    private RenderFragment RenderLinea(string linea)
+    {
+        var partes = Regex.Split(linea, @"(\{\d+\})");
+
+        return builder =>
+        {
+            foreach (var parte in partes)
+            {
+                var match = Regex.Match(parte, @"\{(\d+)\}");
+                if (match.Success)
+                {
+                    int grado = int.Parse(match.Groups[1].Value) - 1;
+                    string acorde = grado >= 0 && grado < acordesActuales.Length
+                        ? acordesActuales[grado]
+                        : "?";
+
+                    builder.OpenElement(0, "span");
+                    builder.AddAttribute(1, "style", "position:relative; display:inline-block; padding-top:1.6em;");
+                    builder.OpenElement(2, "span");
+                    builder.AddAttribute(3, "style", "position:absolute; bottom:100%; color:#f5c518; font-size:0.9em; font-weight:700; white-space:nowrap; text-shadow: 0 0 8px rgba(245,197,24,0.6);");
+                    builder.AddContent(4, acorde); // ← esta línea faltaba
+                    builder.CloseElement();
+                    builder.CloseElement();
+                }
+                else
+                {
+                    builder.AddContent(0, parte);
+                }
+            }
+        };
+    }
+}

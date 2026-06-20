@@ -1,0 +1,74 @@
+﻿@using System.Linq
+@using GradoCeroV1.Data
+@using GradoCeroV1.Models
+@using GradoCeroV1.Services
+@page "/admin/panel"
+@rendermode InteractiveServer
+@inject EstadoSesion Sesion
+@inject NavigationManager Navigation
+@inject AppDbContext DB
+
+<div class="panel-container">
+    <div class="panel-header">
+        <h1 class="panel-titulo">GradoCero</h1>
+        <p class="panel-subtitulo">ADMIN</p>
+    </div>
+
+    <div class="panel-search-wrapper">
+        <span>🔍</span>
+        <input class="panel-search"
+               @bind="textoBusqueda"
+               @bind:event="oninput"
+               placeholder="Buscar alabanzas..." />
+    </div>
+
+    <div class="panel-lista">
+        @foreach (var alabanza in alabanzasFiltradas)
+        {
+            <div class="panel-item"
+                 @onclick='() => Navigation.NavigateTo($"/admin/editar/{alabanza.Id}")'>
+                <div class="panel-item-icono">🎵</div>
+                <div class="panel-item-info">
+                    <span class="panel-item-nombre">@alabanza.Nombre</span>
+                    <span class="panel-item-autor">@alabanza.Autor</span>
+                </div>
+                <span class="panel-item-modo @(alabanza.Modo ? "modo-menor" : "modo-mayor")">
+                    @(alabanza.Modo ? "Menor" : "Mayor")
+                </span>
+            </div>
+        }
+    </div>
+
+    <div class="panel-footer">
+        <button class="panel-btn-agregar"
+                @onclick='() => Navigation.NavigateTo("/admin/agregar")'>
+            ⊕ Agregar Alabanza
+        </button>
+    </div>
+</div>
+
+@code {
+    private List<Alabanza> alabanzas = new();
+    private string textoBusqueda = "";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (!Sesion.EstaLogueado)
+            {
+                Navigation.NavigateTo("/admin/login");
+                return;
+            }
+
+            alabanzas = DB.Alabanzas.ToList();
+            StateHasChanged();
+        }
+    }
+
+    private IEnumerable<Alabanza> alabanzasFiltradas =>
+    string.IsNullOrEmpty(textoBusqueda)
+        ? alabanzas
+        : alabanzas.Where(a => a.Nombre.Contains(textoBusqueda,
+            StringComparison.OrdinalIgnoreCase));   
+}

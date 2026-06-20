@@ -1,0 +1,139 @@
+﻿@using GradoCeroV1.Data
+@using GradoCeroV1.Models
+@using GradoCeroV1.Services
+@page "/admin/editar/{Id:int}"
+@rendermode InteractiveServer
+@inject AppDbContext DB
+@inject NavigationManager Navigation
+@inject EstadoSesion Sesion
+
+<div class="form-container">
+    <div class="form-header">
+        <button class="form-back" @onclick='() => Navigation.NavigateTo("/admin/panel")'>‹</button>
+        <h1 class="form-titulo">GradoCero</h1>
+        <div style="width:24px"></div>
+    </div>
+
+    <div class="form-body">
+        <h2 class="form-subtitulo">Editar Alabanza</h2>
+
+        <div class="form-field">
+            <label class="form-label">TÍTULO</label>
+            <input class="form-input" placeholder="Ej: Cuán Grande es Él"
+                   @bind="alabanza.Nombre" />
+        </div>
+
+        <div class="form-field">
+            <label class="form-label">AUTOR / ARTISTA</label>
+            <input class="form-input" placeholder="Ej: Marcos Witt"
+                   @bind="alabanza.Autor" />
+        </div>
+
+        <div class="form-field">
+            <label class="form-label">MODO</label>
+            <select class="form-input form-select" @onchange="CambiarModo">
+                <option value="false" selected="@(!alabanza.Modo)">Mayor</option>
+                <option value="true" selected="@(alabanza.Modo)">Menor Armónico</option>
+            </select>
+        </div>
+
+        <div class="form-field">
+            <label class="form-label">CUERPO DE LA ALABANZA</label>
+            <textarea id="cuerpoTextarea" class="form-input form-textarea"
+                      placeholder="Pegar o escribir letra de la alabanza..."
+                      @bind="alabanza.Cuerpo"></textarea>
+
+            <div class="form-grados">
+                @foreach (var g in new[] { "1", "2", "3", "4", "5", "6", "7" })
+                {
+                    <button type="button" class="form-grado-btn"
+                            @onclick="() => InsertarGrado(g)">
+                        @("{" + g + "}")
+                    </button>
+                }
+                <button type="button" class="form-limpiar-btn"
+                        @onclick="() => alabanza.Cuerpo = string.Empty">
+                    🗑 Limpiar
+                </button>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(mensajeError))
+        {
+            <p class="form-error">@mensajeError</p>
+        }
+
+        <button class="form-btn" @onclick="Guardar">Actualizar 💾</button>
+
+        <div class="form-instrucciones">
+            <p class="form-inst-titulo">🔧 Instrucciones de Marcado</p>
+            <p class="form-inst-texto">Inserta marcadores numéricos entre llaves donde desees colocar los acordes.</p>
+            <div class="form-inst-ejemplo">
+                <code>{1}, {4}, {5}</code>
+                <p>Usa números para representar los grados (I, IV, V).</p>
+            </div>
+            <div class="form-inst-ejemplo">
+                <code>Dios de lo im{1}posible...</code>
+                <p>El marcador aparecerá justo encima del texto.</p>
+            </div>
+        </div>
+        <button class="form-btn-eliminar" @onclick="Eliminar">🗑 Eliminar Alabanza</button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Alabanza alabanza = new();
+    private string mensajeError = "";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (!Sesion.EstaLogueado)
+            {
+                Navigation.NavigateTo("/admin/login");
+                return;
+            }
+
+            alabanza = await DB.Alabanzas.FindAsync(Id) ?? new();
+            StateHasChanged();
+        }
+    }
+
+    private void CambiarModo(ChangeEventArgs e)
+    {
+        alabanza.Modo = e.Value?.ToString() == "true";
+    }
+
+    private async Task Guardar()
+    {
+        if (string.IsNullOrWhiteSpace(alabanza.Nombre) ||
+            string.IsNullOrWhiteSpace(alabanza.Autor) ||
+            string.IsNullOrWhiteSpace(alabanza.Cuerpo))
+        {
+            mensajeError = "Todos los campos son obligatorios.";
+            return;
+        }
+
+        DB.Alabanzas.Update(alabanza);
+        await DB.SaveChangesAsync();
+        Navigation.NavigateTo("/admin/panel");
+    }
+
+    [Inject] IJSRuntime JS { get; set; } = default!;
+
+    private async Task InsertarGrado(string grado)
+    {
+        await JS.InvokeVoidAsync("insertarEnCursor", "cuerpoTextarea", "{" + grado + "}");
+    }
+
+    private async Task Eliminar()
+    {
+        DB.Alabanzas.Remove(alabanza);
+        await DB.SaveChangesAsync();
+        Navigation.NavigateTo("/admin/panel");
+    }
+}

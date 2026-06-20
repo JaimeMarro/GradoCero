@@ -1,0 +1,78 @@
+﻿@using GradoCeroV1.Data
+@using GradoCeroV1.Models
+@using System.Linq
+@page "/"
+@rendermode InteractiveServer
+@inject AppDbContext DB
+@inject NavigationManager Navigation
+
+<div class="index-container">
+    <div class="index-header">
+        <h1 class="index-titulo">GradoCero</h1>
+
+        <div class="search-wrapper">
+            <span class="search-icon">🔍</span>
+            <input class="search-input"
+                   @bind="textoBusqueda"
+                   @bind:event="oninput"
+                   placeholder="Buscar alabanza por nombre..." />
+        </div>
+    </div>
+
+    <div class="index-fondo">
+        <img src="images/teclado-fondo.png" alt="teclado" />
+    </div>
+
+    @if (!string.IsNullOrEmpty(textoBusqueda))
+    {
+        <div class="resultados-container">
+            <p class="resultados-label">RESULTADOS</p>
+            @if (resultados.Any())
+            {
+                @foreach (var alabanza in resultados)
+                {
+                    <div class="resultado-item"
+                         @onclick='() => Navigation.NavigateTo($"/visualizador/{alabanza.Id}")'>
+                        <div class="resultado-icono">🎵</div>
+                        <div class="resultado-info">
+                            <span class="resultado-nombre">@alabanza.Nombre</span>
+                            <span class="resultado-autor">
+                                @alabanza.Autor
+                                <span class="resultado-modo @(alabanza.Modo ? "modo-menor" : "modo-mayor")">
+                                    @(alabanza.Modo ? "Menor" : "Mayor")
+                                </span>
+                            </span>
+                        </div>
+                        <span class="resultado-flecha">›</span>
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="sin-resultados">No se encontraron resultados.</p>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private string textoBusqueda = "";
+    private List<Alabanza> todasLasAlabanzas = new();
+
+    private List<Alabanza> resultados =>
+        string.IsNullOrEmpty(textoBusqueda)
+            ? new List<Alabanza>()
+            : todasLasAlabanzas
+                .Where(a => a.Nombre.Contains(textoBusqueda,
+                    StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            todasLasAlabanzas = DB.Alabanzas.ToList();
+            StateHasChanged();
+        }
+    }
+}
