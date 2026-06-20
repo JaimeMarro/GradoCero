@@ -3,10 +3,16 @@
 @using GradoCeroV1.Services
 @using System.Text.RegularExpressions
 @page "/visualizador/{Id:int}"
+<PageTitle>@(alabanza?.Nombre ?? "GradoCero"), @(alabanza?.Autor ?? "GradoCero") - Acordes - GradoCero</PageTitle>
 @rendermode InteractiveServer
 @inject AppDbContext DB
 @inject TransposicionService Transposicion
 @inject NavigationManager Navigation
+
+<HeadContent>
+    <meta name="description"
+          content="Acordes de @alabanza.Nombre del autor: @alabanza.Autor - GradoCero" />
+</HeadContent>
 
 @if (alabanza == null)
 {
