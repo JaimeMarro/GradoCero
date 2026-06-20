@@ -13,8 +13,9 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 if (builder.Environment.IsProduction())
 {
+    var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
     builder.Services.AddDbContext<AppDbContext>(options =>
-        options.UseNpgsql(connectionString));
+        options.UseNpgsql(databaseUrl));
 }
 else
 {
