@@ -3,15 +3,14 @@
 @using GradoCeroV1.Services
 @using System.Text.RegularExpressions
 @page "/visualizador/{Id:int}"
-<PageTitle>@(alabanza?.Nombre ?? "GradoCero"), @(alabanza?.Autor ?? "GradoCero") - Acordes - GradoCero</PageTitle>
+<PageTitle>@(alabanza?.Nombre ?? "GradoCero"), @(alabanza?.Autor ?? "") - Acordes - GradoCero</PageTitle>
 @rendermode InteractiveServer
 @inject AppDbContext DB
 @inject TransposicionService Transposicion
 @inject NavigationManager Navigation
 
 <HeadContent>
-    <meta name="description"
-          content="Acordes de @alabanza.Nombre del autor: @alabanza.Autor - GradoCero" />
+    <meta name="description" content="Acordes de @(alabanza?.Nombre ?? "") de @(alabanza?.Autor ?? "") en GradoCero" />
 </HeadContent>
 
 @if (alabanza == null)
@@ -32,7 +31,7 @@ else
         <div class="viz-info">
             <div class="viz-nombre-borde"></div>
             <h2 class="viz-nombre">@alabanza.Nombre</h2>
-            <p class="viz-autor">@alabanza.Autor.ToUpper()</p>
+            <p class="viz-autor">@alabanza?.Autor?.ToUpper()</p>
         </div>
 
         <div class="viz-controles">
